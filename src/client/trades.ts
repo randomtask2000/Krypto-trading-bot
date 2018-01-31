@@ -70,7 +70,9 @@ export class TradesComponent implements OnInit {
       {width: 95, suppressSizeToFit: true, field:'time', headerName:'t', cellRenderer:(params) => {
         var d = new Date(params.value||0);
         return (d.getDate()+'').padStart(2, "0")+'/'+((d.getMonth()+1)+'').padStart(2, "0")+' '+(d.getHours()+'').padStart(2, "0")+':'+(d.getMinutes()+'').padStart(2, "0")+':'+(d.getSeconds()+'').padStart(2, "0");
-      }, cellClass: 'fs11px', sort: 'desc'},
+      }, cellClass: 'fs11px', sort: 'desc', comparator: (valueA: any, valueB: any, nodeA: RowNode, nodeB: RowNode, isInverted: boolean) => {
+          return (nodeA.data.Ktime||nodeA.data.time) - (nodeB.data.Ktime||nodeB.data.time);
+      }},
       {width: 95, suppressSizeToFit: true, field:'Ktime', hide:true, headerName:'timePong', cellRenderer:(params) => {
         if (params.value==0) return '';
         var d = new Date(params.value);
@@ -102,7 +104,9 @@ export class TradesComponent implements OnInit {
       }, cellRendererFramework: QuoteCurrencyCellComponent},
       {width: 65, field:'Kdiff', headerName:'Kdiff', hide:true, cellClass: (params) => {
         if (params.data.side === 'K') return "kira"; else return "";
-      }, cellRendererFramework: QuoteCurrencyCellComponent}
+      }, cellRenderer: (params) => {
+        return (!params.value) ? "" : params.data.quoteSymbol + parseFloat(params.value.toFixed(8));
+      }}
     ];
   }
 
@@ -166,7 +170,7 @@ export class TradesComponent implements OnInit {
           Kprice: t.Kprice ? t.Kprice : null,
           Kvalue: t.Kvalue ? t.Kvalue : null,
           Kdiff: t.Kdiff && t.Kdiff!=0 ? t.Kdiff : null,
-          quoteSymbol: t.pair.quote,
+          quoteSymbol: t.pair.quote.substr(0,3).replace('USD','$').replace('EUR','€'),
           productFixed: this.product.fixed
         }]});
         if (t.loadedFromDB === false && this.audio) {

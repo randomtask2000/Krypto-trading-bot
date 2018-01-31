@@ -67,7 +67,7 @@ export class BaseCurrencyCellComponent implements AgRendererComponent {
 export class QuoteCurrencyCellComponent implements AgRendererComponent {
   private params:any;
   private quoteSymbol:string = 'USD';
-  private productFixed:number = 2;
+  private productFixed:number = 8;
 
   agInit(params:any):void {
     this.params = params;
